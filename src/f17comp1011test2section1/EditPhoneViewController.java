@@ -61,17 +61,9 @@ public class EditPhoneViewController implements Initializable {
         array.add("cameraRes");
         String test = "4";//phoneIDSpinner.getValue().toString());
         
-        String SQL = "SELECT * From Sean_Tucker.phones Where phoneID = ?;";
-        resultsArray = selectFromDB(dbConnection,username,password,SQL,array,test /*phoneIDSpinner.getValue().toString()*/);
-        /*resultArray = resultsArray.get(0);
-        
-        manufacutureTextField.setText(resultArray.get(1));
-        modelTextField.setText(resultArray.get(2));
-        memoryTextField.setText(resultArray.get(3));
-        colourTextField.setText(resultArray.get(4));
-        screenSizeTextField.setText(resultArray.get(5));
-        */
-        
+        String SQL = "SELECT * From Sean_Tucker.phones Where phoneID = "+ phoneIDSpinner.getValue().toString();
+        selectFromDB(dbConnection,username,password,SQL,array,test /*phoneIDSpinner.getValue().toString()*/);
+      
     }
     
     /**
@@ -94,8 +86,7 @@ public class EditPhoneViewController implements Initializable {
         
     }   
     
-    
-    public ArrayList<ArrayList> selectFromDB(String dbConnectionString, String user, String pass, String sqlScript, ArrayList<String> array, String whereClause) throws SQLException
+    public void selectFromDB(String dbConnectionString, String user, String pass, String sqlScript, ArrayList<String> array, String whereClause) throws SQLException
     {
         ArrayList<String> results;
         ArrayList<ArrayList> allResults;
@@ -110,7 +101,7 @@ public class EditPhoneViewController implements Initializable {
             conn = DriverManager.getConnection(dbConnectionString, user, pass);
             //2.  create a statement object
             statement = conn.prepareStatement(sqlScript);
-            statement.setString(1,whereClause);
+            //statement.setString(1,whereClause);
             
             //3.  create the SQL query
             resultSet = statement.executeQuery(sqlScript);
@@ -120,16 +111,13 @@ public class EditPhoneViewController implements Initializable {
             
             while (resultSet.next())
             {
+                    manufacutureTextField.setText(resultSet.getString("manufacturer"));
+                    modelTextField.setText(resultSet.getString("model"));
+                    memoryTextField.setText(resultSet.getString("memory"));
+                    colourTextField.setText(resultSet.getString("colour"));
+                    screenSizeTextField.setText(resultSet.getString("screenSize"));                
+
                 
-
-                results = new ArrayList<>();
-                int count = array.size();
-                for (int i = 0; i < count; i++) 
-                {
-
-                    results.add(resultSet.getString(array.get(i)));
-                }
-                allResults.add(results);
             }
             
         } catch (Exception e)
@@ -145,7 +133,7 @@ public class EditPhoneViewController implements Initializable {
             if(resultSet != null)
                 resultSet.close();
         }
-        return allResults;
+
     } // end of select all statement
     
 }
