@@ -14,6 +14,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -36,10 +37,41 @@ public class EditPhoneViewController implements Initializable {
     @FXML    private TextField colourTextField;
     @FXML    private TextField screenSizeTextField;
     @FXML    private Spinner<Integer> phoneIDSpinner;
-
+        String dbConnection = "jdbc:mysql://us-cdbr-azure-southcentral-f.cloudapp.net:3306/?user=b443d4f6b8b1a7";
+        String username = "b443d4f6b8b1a7";
+        String password = "7e42bc2c";
 
     public void loadPhoneInfo() throws SQLException
     {
+        ArrayList<ArrayList> resultsArray;
+        resultsArray = new ArrayList<>();
+        
+        ArrayList<String> resultArray;
+        resultArray = new ArrayList<>();
+        
+        ArrayList<String> array;
+        array = new ArrayList<>();
+        
+        array.add("phoneID");
+        array.add("manufacturer");
+        array.add("model");
+        array.add("memory");
+        array.add("colour");
+        array.add("screenSize");
+        array.add("cameraRes");
+        String test = "4";//phoneIDSpinner.getValue().toString());
+        
+        String SQL = "SELECT * From Sean_Tucker.phones Where phoneID = ?;";
+        resultsArray = selectFromDB(dbConnection,username,password,SQL,array,test /*phoneIDSpinner.getValue().toString()*/);
+        /*resultArray = resultsArray.get(0);
+        
+        manufacutureTextField.setText(resultArray.get(1));
+        modelTextField.setText(resultArray.get(2));
+        memoryTextField.setText(resultArray.get(3));
+        colourTextField.setText(resultArray.get(4));
+        screenSizeTextField.setText(resultArray.get(5));
+        */
+        
     }
     
     /**
@@ -56,6 +88,64 @@ public class EditPhoneViewController implements Initializable {
         SpinnerValueFactory<Integer> phoneIDValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,100);
         phoneIDSpinner.setValueFactory(phoneIDValueFactory);
         phoneIDSpinner.setEditable(true);
-    }    
+        String newTest = "SELECT * FROM Sean_Tucker.Phone";
+        
+        
+        
+    }   
+    
+    
+    public ArrayList<ArrayList> selectFromDB(String dbConnectionString, String user, String pass, String sqlScript, ArrayList<String> array, String whereClause) throws SQLException
+    {
+        ArrayList<String> results;
+        ArrayList<ArrayList> allResults;
+        
+        allResults = new ArrayList<>();
+        Connection conn = null;
+        PreparedStatement statement = null;
+        ResultSet resultSet = null;
+        
+        try{
+            //1. connect to the database
+            conn = DriverManager.getConnection(dbConnectionString, user, pass);
+            //2.  create a statement object
+            statement = conn.prepareStatement(sqlScript);
+            statement.setString(1,whereClause);
+            
+            //3.  create the SQL query
+            resultSet = statement.executeQuery(sqlScript);
+            //resultSet = statement.executeQuery("SELECT * FROM Sean_Tucker.testing");
+
+            
+            
+            while (resultSet.next())
+            {
+                
+
+                results = new ArrayList<>();
+                int count = array.size();
+                for (int i = 0; i < count; i++) 
+                {
+
+                    results.add(resultSet.getString(array.get(i)));
+                }
+                allResults.add(results);
+            }
+            
+        } catch (Exception e)
+        {
+            System.err.println(e);
+        }
+        finally
+        {
+            if (conn != null)
+                conn.close();
+            if(statement != null)
+                statement.close();
+            if(resultSet != null)
+                resultSet.close();
+        }
+        return allResults;
+    } // end of select all statement
     
 }
