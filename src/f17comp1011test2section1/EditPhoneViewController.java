@@ -80,7 +80,7 @@ public class EditPhoneViewController implements Initializable {
         SpinnerValueFactory<Integer> phoneIDValueFactory = new SpinnerValueFactory.IntegerSpinnerValueFactory(1,100);
         phoneIDSpinner.setValueFactory(phoneIDValueFactory);
         phoneIDSpinner.setEditable(true);
-        String newTest = "SELECT * FROM Sean_Tucker.Phone";
+        String newTest = "select count(model) from Sean_Tucker.Phone";
         
         
         
